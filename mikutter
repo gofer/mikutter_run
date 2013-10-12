@@ -1,0 +1,88 @@
+#!/bin/bash
+
+###############################################################################
+# mikutterが起動するなにか
+# (C) 2013 gofer (@gofer_ex).
+# 
+# 使い方
+# 1. mikutterを落としてきて/usr/localとかに展開する
+#    $ wget http://mikutter.hachune.net/bin/mikutter.0.2.2.1373.tar.gz
+#    $ mv ./mikutter.0.2.2.1373.tar.gz /usr/local
+#    $ tar xvf /usr/local/mikutter.0.2.2.1373
+#    $ rm -f /usr/local/mikutter.0.2.2.1373.tar.gz
+# 2. この怪しげなブツを/usr/binとかに置く
+#    $ sudo mv ./mikutter /usr/bin
+# 3. 空気を読んで
+#    $ chmod +x /usr/bin/mikutter
+#    とかする
+# 4. $ mikutter
+#    でておくれになれる
+###############################################################################
+
+###############################################################################
+# 設定的ななにか
+###############################################################################
+
+# これは環境に応じて変更
+MIKU_DIR=/usr/local/mikutter               # mikutterの絶対パス
+RUBY=ruby                                  # Rubyのパス
+LOG_DIR=${MIKU_DIR}/log                    # logの絶対パス
+
+# なるべく弄らないほうがいい
+RUN_LOG_PREFIX=run                         # stdoutにゲロゲロされるログのprefix
+RUN_LOG_SUFFIX=.log                        # stdoutにゲロゲロされるログのsuffix
+
+ERROR_LOG_PREFIX=error                     # stderrにゲロゲロされるログのprefix
+ERROR_LOG_SUFFIX=.log                      # stderrにゲロゲロされるログのsuffix
+
+DATE_FORMAT="%04Y%02m%02d_%02H%02M%02S"    # dateコマンドに渡す書式文字列
+
+# 普通は弄らない
+TEMP_FILE=temp                             # エラーログをチンポラリするファイル
+SCRIPT_NAME=mikutter.rb                    # ておくれへの片道チケット
+
+###############################################################################
+# 以下，実行スクリプト (弄ると何が起こるかわからない)
+###############################################################################
+
+# mikutterの実行ディレクトリが存在するか
+t=`ls -Al ${MIKU_DIR} 2> /dev/null | wc -l`
+if [ $t -eq 0 ]
+then
+    echo "No such directory: ${MIKU_DIR}"
+    exit
+fi
+
+# ログの出力先が存在するか
+t=`ls -Al ${LOG_DIR} 2> /dev/null | wc -l`
+if [ $t -eq 0 ]
+then
+    echo "No such directory: ${LOG_DIR}"
+    
+    # 存在しないなら，試しに作ってみよう
+    mkdir ${LOG_DIR} 1> /dev/null 2> ${TEMP_FILE}
+    s=`ls -s ${TEMP_FILE} | sed -e "s/${TEMP_FILE}//g"`
+    err=`cat ${TEMP_FILE}`
+    rm -f ${TEMP_FILE} 1> /dev/null 2> /dev/null
+    if [ $s -ne 0 ]
+    then
+        echo "Cannot make directory: ${LOG_DIR}"
+        echo ${err}
+        exit
+    else
+        echo "But, we can make it."
+    fi
+fi
+
+# ログファイル用の日付
+d=`date "+${DATE_FORMAT}"`
+
+# ログファイルの名前
+RUN_LOG="${RUN_LOG_PREFIX}_$d${RUN_LOG_SUFFIX}"
+ERROR_LOG="${ERROR_LOG_PREFIX}_$d${ERROR_LOG_SUFFIX}"
+
+# みっくみくにされる
+${RUBY} ${MIKU_DIR}/${SCRIPT_NAME} \
+    1> ${LOG_DIR}/${RUN_LOG} \
+    2> ${LOG_DIR}/${ERROR_LOG} &
+
