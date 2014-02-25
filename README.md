@@ -38,3 +38,20 @@ $ mikutter
 でておくれになれる
 </p></li>
 </ol>
+
+## おまけ
+### gemのインストール
+<code><pre>
+$ sh INSTALL
+</pre></code>
+で必要なgemのほとんどは入るはず。
+
+extensionで必要なgemをOPTION_GEMSに書いて，君だけのシェルスクリプトを作ろう！
+
+### rubyのバージョン違い
+rubyのバージョン違いはalternativesで管理すればいい。
+alternativesがなければ，このスクリプトを空気を読んで使ってもいい。
+<code><pre>
+$ sh ruby_install
+</pre></code>
+

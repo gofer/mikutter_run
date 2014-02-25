@@ -1,0 +1,9 @@
+#!/bin/sh
+
+GEM=gem
+GEMS=(memoize typed-array bsearch addressable gtk2 oauth twitter)
+OPTION_GEMS=(weather_jp)
+
+${GEM} install ${GEMS[@]}
+${GEM} install ${OPTION_GEMS[@]}
+

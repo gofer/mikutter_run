@@ -1,0 +1,17 @@
+#!/bin/sh
+
+VERSION="2.1.1"
+LOCAL_DIR="/usr/local/ruby-${VERSION}"
+BINS=(erb gem irb rake rdoc ri ruby)
+BIN_DIR="/usr/bin"
+
+for BIN in ${BINS[@]}
+do
+    sudo ln -fs ${LOCAL_DIR}/bin/${BIN} ${BIN_DIR}/${BIN}-${VERSION}
+done
+
+for BIN in ${BINS[@]}
+do
+    sudo ln -fs ${BIN_DIR}/${BIN}-${VERSION} ${BIN_DIR}/${BIN}
+done
+
